@@ -35,10 +35,17 @@
             border: 1px solid #DDD;
         }
         .list {display: block;list-style: none; padding: 0; margin: 10px 0; margin-top: 20px;}
-        .item {line-height: 36px;display: -webkit-box;padding: 5px 10px;margin: 10px; cursor: pointer;
+        .item {line-height: 36px;display: -webkit-box; padding: 5px 10px;margin: 10px; cursor: pointer;
             color: #fff; margin: 0; font-size: 18px;}
-        .item:hover{border-radius: 6px;background-color: rgba(255,255,255,.2);}
-        .item.active{background-color: rgba(0,0,0,.1);border-radius: 6px;}
+        .item:hover{background-color: rgba(255,255,255,.2);}
+        .item.active{background-color: rgba(0,0,0,.1);}
+        #qrcode{
+            padding: 10px;
+        }
+        .qrcode-tips{
+            text-align: center;
+            color: #333;
+        }
     </style>
 </head>
     
@@ -53,7 +60,7 @@
                     v-repeat="devices" 
                     v-class="active: sel"
                     v-on="click: onDevices(this)">
-                    {{name}}
+                    {{$index+1}}  {{name}}
                 </li>
             </ul>
         </div>
@@ -67,6 +74,7 @@
         
         <div id="qrcode">
             <img v-attr="src: qrcode">
+            <p class="qrcode-tips">扫描二维码获取设备信息</p>
         </div>
     </div>
 

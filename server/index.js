@@ -19,7 +19,7 @@ app.use(express.static(path.join(app.get('root'), 'public')))
 app.get('/', function(req, res) {
     var ua = req.headers['user-agent']
 	var current = {
-		name: 'current',
+		name: '当前设备',
     	info: {
     		ua: ua
     	}
@@ -38,22 +38,26 @@ app.get('/device/:cid', function (req, res){
 	var params = req.params
 	var cid = req.params.cid
 	var ua = req.headers['user-agent']
+	var name = '设备'
 
-	res.render('device.ejs',{
-		cid: cid,
-		ua: ua
-	})
+	var curClients = clients[cid]
+	if(!_.isUndefined(curClients)){
+		curClients.index ++
+		name += curClients.index
 
-	if(_.isUndefined(clients[cid])){
-		return
+		clientSocket.emit('client:update' + cid, {
+			name: name,
+			cid: cid,
+			info: {
+				ua: ua
+			}
+		})
 	}
 
-	clientSocket.emit('client:update' + cid, {
-		name: 'cid',
+	res.render('device.ejs',{
+		name: name,
 		cid: cid,
-		info: {
-			ua: ua
-		}
+		ua: ua
 	})
 })
 
@@ -69,11 +73,10 @@ var deviceSocket = io.of('/device')
 clientSocket.on('connection', function (socket) {
 	var socketId
     socket.on('client:init', function (data) {
-        console.log(data.cid)
-
         socketId = data.cid
-        clients[socketId] = {}
-
+        clients[socketId] = {
+        	index: 0
+        }
     })
 
 	socket.on('disconnect', function () {
@@ -82,13 +85,12 @@ clientSocket.on('connection', function (socket) {
     
 })
 
-
-setInterval(function(){
-	var date = Date.now();
-	_.each(clients, function(val, key){
-		console.log('client->[', date, ']', key)
-	})
-}, 10000);
+// setInterval(function(){
+// 	var date = Date.now();
+// 	_.each(clients, function(val, key){
+// 		console.log('client->[', date, ']', key)
+// 	})
+// }, 10000);
 
 
 /**
