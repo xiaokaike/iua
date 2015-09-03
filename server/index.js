@@ -17,6 +17,13 @@ app.use(express.static(path.join(app.get('root'), 'public')))
 
 // index
 app.get('/', function(req, res) {
+    
+    res.render('dashboard.ejs',{
+
+    })
+})
+
+app.get('/client/:cid', function(req, res) {
     res.render('dashboard.ejs',{})
 })
 
@@ -30,15 +37,21 @@ app.get('/device/:cid', function (req, res){
 		ua: ua
 	})
 
-	clientSocket.emit('client:update', {
+	if(_.isUndefined(clients[cid])){
+		return
+	}
+
+	clientSocket.emit('client:update' + cid, {
 		cid: cid,
 		info: {
 			device: 'aaa',
 			ua: ua
 		}
 	})
-
 })
+
+
+var clients = {}
 
 var server = http.createServer(app)
 var io = require('socket.io').listen(server)
@@ -47,19 +60,32 @@ var clientSocket = io.of('/client')
 var deviceSocket = io.of('/device')
 
 clientSocket.on('connection', function (socket) {
-    var socketId
-
+	var socketId
     socket.on('client:init', function (data) {
-        console.log(data)
+        console.log(data.cid)
+        
+        socketId = data.cid
+        clients[socketId] = {}
+
+        socket.emit('client:update' + socketId, {
+			cid: 'xxx',
+			info: 'xxxx'
+		})
+    })
+
+	socket.on('disconnect', function () {
+        if (socketId) delete clients[socketId]
     })
     
-
-	clientSocket.emit('client:update', {
-		cid: 'xxx',
-		info: 'xxxx'
-	})
 })
 
+
+setInterval(function(){
+	var date = Date.now();
+	_.each(clients, function(val, key){
+		console.log('client->[', date, ']', key)
+	})
+}, 10000);
 
 
 /**
