@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>deshboard</title>
+</head>
+
+<body>
+    <h1>deshboard</h1>
+
+    <ul id="info">
+        
+    </ul>
+
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    
+    // socket
+    var socket = io.connect(window.location.origin + '/client')
+
+    socket.on('client:update', function (data) {
+        updateInfo(data)
+    })
+
+
+    var $info = document.getElementById('info')
+    function updateInfo(data){
+        var li = document.createElement('li');
+        li.innerHTML = JSON.stringify(data)
+        $info.appendChild(li)
+    }
+
+    </script>
+    
+</body>
+
+</html>
