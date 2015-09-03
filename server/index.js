@@ -17,14 +17,21 @@ app.use(express.static(path.join(app.get('root'), 'public')))
 
 // index
 app.get('/', function(req, res) {
-    
-    res.render('dashboard.ejs',{
-
+    var ua = req.headers['user-agent']
+	var current = {
+		name: 'current',
+    	info: {
+    		ua: ua
+    	}
+	}
+	
+    res.render('dashboard.ejs', {
+    	current: JSON.stringify(current)
     })
 })
 
 app.get('/client/:cid', function(req, res) {
-    res.render('dashboard.ejs',{})
+	
 })
 
 app.get('/device/:cid', function (req, res){
@@ -42,9 +49,9 @@ app.get('/device/:cid', function (req, res){
 	}
 
 	clientSocket.emit('client:update' + cid, {
+		name: 'cid',
 		cid: cid,
 		info: {
-			device: 'aaa',
 			ua: ua
 		}
 	})
@@ -63,14 +70,10 @@ clientSocket.on('connection', function (socket) {
 	var socketId
     socket.on('client:init', function (data) {
         console.log(data.cid)
-        
+
         socketId = data.cid
         clients[socketId] = {}
 
-        socket.emit('client:update' + socketId, {
-			cid: 'xxx',
-			info: 'xxxx'
-		})
     })
 
 	socket.on('disconnect', function () {
