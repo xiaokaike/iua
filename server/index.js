@@ -13,7 +13,6 @@ app.set('port', process.env.PORT || 1024)
 app.set('view engine', 'ejs')
 app.set('root', path.resolve(__dirname, '../').replace(/\/+$/, ''))
 app.set('views', app.get('root') + '/views')
-app.use(express.static(path.join(app.get('root'), 'public')))
 
 // index
 app.get('/', function(req, res) {
@@ -62,6 +61,7 @@ app.get('/device/:cid', function (req, res){
 })
 
 
+
 var clients = {}
 
 var server = http.createServer(app)
@@ -93,6 +93,7 @@ clientSocket.on('connection', function (socket) {
 // }, 10000);
 
 
+app.use(express.static(path.join(app.get('root'), 'public')))
 /**
  *  server and port
  **/
