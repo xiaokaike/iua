@@ -74,6 +74,9 @@
         
         <div id="qrcode">
             <img v-attr="src: qrcode">
+            <p>
+                <input value="{{deviceUrl}}" readonly></input>
+            </p>
             <p class="qrcode-tips">扫描二维码获取设备信息</p>
         </div>
     </div>
