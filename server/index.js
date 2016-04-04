@@ -8,6 +8,7 @@ var colors = require('colors')
 var http = require('http')
 var cookieParser = require('cookie-parser');
 var qrcode = require('qrcode-terminal');
+var ip = require('ip');
 
 var app = new express()
 
@@ -114,10 +115,15 @@ app.use(express.static(path.join(app.get('root'), 'public')))
 
 var port = app.get('port')
 server.listen(port, function() {
-  console.log('Server is listen on port', String(port).blue)
-  qrcode.generate('http://github.com', function (qrcode) {
+  var url = 'http://'+ip.address()+ ':' + port
+
+
+  console.log('Server on url', String(url).blue)
+
+  qrcode.generate(url, function (qrcode) {
     console.log(qrcode);
   });
+  
 })
 
 
