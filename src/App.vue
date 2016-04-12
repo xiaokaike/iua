@@ -20,18 +20,19 @@
       </div>    
     </div>
     
-    <div id="qrcode">
+    <!-- <div id="qrcode">
       <img v-bind:src="qrcode">
       <p>
           <input value="{{deviceUrl}}" readonly></input>
       </p>
       <p class="qrcode-tips">扫描二维码获取设备信息</p>
-    </div>
+    </div> -->
+    <qrcode val="xxx" size="128" bg-color="#FFFFFF" fg-color="#000000" level="L"></qrcode>
   </div>
 </template>
 
 <script>
-// import qr from './qr.js'
+import qrcode from './components/qrcode'
 
 export default {
   data () {
@@ -45,6 +46,9 @@ export default {
       qrcode: '',
       deviceUrl: ''
     }
+  },
+  components: {
+    qrcode
   },
   methods: {
     fetch () {
