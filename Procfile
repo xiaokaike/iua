@@ -1,4 +1,4 @@
 web: node server/index
 
 engines:
-  node: '0.10'
+  node: '4.4.1'

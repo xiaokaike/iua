@@ -1,8 +1,8 @@
 {
-  "name": "yourua",
+  "name": "iua",
   "version": "0.0.0",
   "author": "xiaokai <kexiaokai@gmail.com>",
-  "description": "yourua",
+  "description": "iua",
   "main": "index.js",
   "scripts": {
     "start": "node server/index",
