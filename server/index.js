@@ -1,41 +1,24 @@
-'use strict';
+'use strict'
 
 var express = require('express')
+var socketIo = require('socket.io')
 var path = require('path')
 var _ = require('underscore')
-var app = express()
 var colors = require('colors')
 var http = require('http')
-var cookieParser = require('cookie-parser');
-var qrcode = require('qrcode-terminal');
-var ip = require('ip');
+var cookieParser = require('cookie-parser')
+var qrcode = require('qrcode-terminal')
+var ip = require('ip')
+var AV = require('leanengine')
 
-var app = new express()
+var app = express()
+// 使用这个中间件
+app.use(AV.Cloud)
+app.use(express.static(path.join(__dirname, '../public/')))
+app.use(cookieParser('iua secret cookie'));
 
-app.set('port', process.env.PORT || 1024)
-app.set('view engine', 'ejs')
-app.set('root', path.resolve(__dirname, '../').replace(/\/+$/, ''))
-app.set('views', app.get('root') + '/views')
-app.use(cookieParser('novelcn_yzw secret cookie'));
 
-// index
-app.get('/', function(req, res) {
-  var ua = req.headers['user-agent']
-  var current = {
-    name: '当前设备',
-    info: {
-      ua: ua
-    }
-  }
-
-  res.render('dashboard.ejs', {
-    current: JSON.stringify(current)
-  })
-})
-
-app.get('/client/:cid', function(req, res) {
-
-})
+var clients = {}
 
 app.get('/device/:cid', function(req, res) {
   var params = req.params
@@ -66,19 +49,23 @@ app.get('/device/:cid', function(req, res) {
     maxAge: 7 * 24 * 60 * 60 * 1000
   })
 
-  res.render('device.ejs', {
-    id: deviceId,
-    cid: cid,
-    ua: ua
-  })
+  res.send('xx')
+  
+  // res.render('device.ejs', {
+  //   id: deviceId,
+  //   cid: cid,
+  //   ua: ua
+  // })
 })
 
 
 
-var clients = {}
+/**
+ *  server and port
+ **/
 
 var server = http.createServer(app)
-var io = require('socket.io').listen(server)
+var io = socketIo.listen(server)
 
 var clientSocket = io.of('/client')
 var deviceSocket = io.of('/device')
@@ -98,34 +85,7 @@ clientSocket.on('connection', function(socket) {
 
 })
 
-// setInterval(function(){
-// 	var date = Date.now();
-// 	_.each(clients, function(val, key){
-// 		console.log('client->[', date, ']', key)
-// 	})
-// }, 10000);
-
-
-app.use(express.static(path.join(app.get('root'), 'public')))
-
-
-/**
- *  server and port
- **/
-
-var port = app.get('port')
-server.listen(port, function() {
-  var url = 'http://'+ip.address()+ ':' + port
-
-
-  console.log('Server on url', String(url).blue)
-
-  qrcode.generate(url, function (qrcode) {
-    console.log(qrcode);
-  });
-  
-})
-
+module.exports = server
 
 
 /**
