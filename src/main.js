@@ -36,3 +36,5 @@ socket.on('client:update' + conf.cid, function(data) {
     console.log(data)
   }    
 })
+
+console.log('--')

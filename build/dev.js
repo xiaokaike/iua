@@ -13,14 +13,13 @@ rm('-rf', 'public')
 mkdir('public')
 cp('-R', 'static', conf.output.path)
 
-webpack(conf, function (err, stats) {
-  spinner.stop()
-  if (err) throw err
-  process.stdout.write(stats.toString({
-    colors: true,
-    modules: false,
-    children: false,
-    chunks: false,
-    chunkModules: false
-  }) + '\n')
-})
+
+var compiler = webpack(conf)
+
+compiler.watch({ // watch options:
+    aggregateTimeout: 300, // wait so long for more changes
+    poll: true // use polling instead of native watchers
+    // pass a number to set the polling interval
+}, function(err, stats) {
+    // ...
+});
