@@ -12,13 +12,33 @@ var ip = require('ip')
 var AV = require('leanengine')
 
 var app = express()
+
+app.set('view engine', 'ejs')
+
 // 使用这个中间件
 app.use(AV.Cloud)
-app.use(express.static(path.join(__dirname, '../public/')))
-app.use(cookieParser('iua secret cookie'));
+app.set('views', path.join(__dirname, '../views'))
+app.use(cookieParser('iua secret cookie'))
 
 
 var clients = {}
+
+// index
+app.get('/', function(req, res) {
+  var ua = req.headers['user-agent']
+  var current = {
+    id: '',
+    name: '当前设备',
+    uastring: ua,
+    info: {
+      
+    }
+  }
+
+  res.render('dashboard.ejs', {
+    current: JSON.stringify(current)
+  })
+})
 
 app.get('/device/:cid', function(req, res) {
   var params = req.params
@@ -39,8 +59,9 @@ app.get('/device/:cid', function(req, res) {
       id: deviceId,
       name: deviceId,
       cid: cid,
+      uastring: ua,
       info: {
-        ua: ua
+        
       }
     })
   }
@@ -48,17 +69,15 @@ app.get('/device/:cid', function(req, res) {
   res.cookie('deviceId', deviceId, {
     maxAge: 7 * 24 * 60 * 60 * 1000
   })
-
-  res.send('xx')
   
-  // res.render('device.ejs', {
-  //   id: deviceId,
-  //   cid: cid,
-  //   ua: ua
-  // })
+  res.render('device.ejs', {
+    id: deviceId,
+    cid: cid,
+    ua: ua
+  })
 })
 
-
+app.use(express.static(path.join(__dirname, '../public/')))
 
 /**
  *  server and port
