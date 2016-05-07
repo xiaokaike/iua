@@ -5,6 +5,7 @@ var socketIo = require('socket.io')
 var path = require('path')
 var _ = require('underscore')
 var colors = require('colors')
+var parser = require('ua-parser-js')
 var http = require('http')
 var cookieParser = require('cookie-parser')
 var qrcode = require('qrcode-terminal')
@@ -30,9 +31,7 @@ app.get('/', function(req, res) {
     id: '',
     name: '当前设备',
     uastring: ua,
-    info: {
-      
-    }
+    info: JSON.stringify(parser(ua))
   }
 
   res.render('dashboard.ejs', {
@@ -44,37 +43,25 @@ app.get('/device/:cid', function(req, res) {
   var params = req.params
   var cid = req.params.cid
   var ua = req.headers['user-agent']
-  var deviceId = '';
-
-  deviceId = req.cookies.deviceId || _uuid();
-
-  var curClients = clients[cid]
-
-
-  if (!_.isUndefined(curClients)) {
-    
-    curClients[deviceId] = 1;
-
-    clientSocket.emit('client:update' + cid, {
-      id: deviceId,
-      name: deviceId,
-      cid: cid,
-      uastring: ua,
-      info: {
-        
-      }
-    })
+  var deviceId = req.cookies.deviceId || _uuid()
+  var linkClients = clients[cid]
+  var deviceInfo = {
+    id: deviceId,
+    name: deviceId,
+    cid: cid,
+    uastring: ua,
+    info: JSON.stringify(parser(ua))
   }
 
   res.cookie('deviceId', deviceId, {
     maxAge: 7 * 24 * 60 * 60 * 1000
   })
-  
-  res.render('device.ejs', {
-    id: deviceId,
-    cid: cid,
-    ua: ua
-  })
+  res.render('device.ejs', deviceInfo)
+
+  if (!_.isUndefined(linkClients)) {
+    linkClients[deviceId] = 1;
+    clientSocket.emit('client:update' + cid, deviceInfo)
+  }
 })
 
 app.use(express.static(path.join(__dirname, '../public/')))

@@ -1,33 +1,32 @@
 {
   "name": "iua",
   "version": "0.0.1",
-  "author": "xiaokai <kexiaokai@gmail.com>",
+  "author": "",
   "description": "iua",
   "private": true,
   "scripts": {
-    "start": "node server/index",
-    "lean": "node server/lean",
+    "start": "node server/lean",
     "dev": "node build/dev.js",
     "build": "node build/build.js",
     "unit": "karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e"
   },
-  "author": "",
   "license": "ISC",
   "dependencies": {
-    "vue": "^1.0.18",
     "colors": "*",
     "cookie-parser": "^1.3.5",
     "ejs": "^1.0.0",
     "express": "^4.3.1",
     "ip": "^1.1.2",
+    "leanengine": "^0.4.0",
     "node-uuid": "^1.4.3",
+    "qr.js": "0.0.0",
     "qrcode-terminal": "^0.10.0",
     "socket.io": "^1.3.5",
+    "ua-parser-js": "^0.7.10",
     "underscore": "~1.6.0",
-    "leanengine": "^0.4.0",
-    "qr.js": "0.0.0"
+    "vue": "^1.0.18"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",

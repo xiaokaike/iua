@@ -51,6 +51,7 @@ export default {
   },
   created () {
     this.deviceUrl = conf.originUrl + '/device/' + conf.cid
+    
     window.__current.id = conf.cid
     this.update(window.__current)
     this.initSocket()
@@ -65,8 +66,12 @@ export default {
       this.currentInfo = it.info
     },
     update (data) {
+      if (uamap[data.id]) {
+        return
+      } 
+      uamap[data.id] = true
+      console.log(data)
       this.devices.push(data)
-
       this.selectId = data.id
       this.currentUa = data.uastring
       this.currentInfo = data.info
@@ -79,10 +84,7 @@ export default {
       })
 
       socket.on('client:update' + conf.cid, (data) => {
-        if (!uamap[data.id]) {
-          uamap[data.id] = true
-          this.update(data)
-        }    
+        this.update(data)   
       })
     }
   }
