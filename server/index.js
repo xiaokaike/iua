@@ -1,31 +1,37 @@
-'use strict';
+'use strict'
 
 var express = require('express')
+var socketIo = require('socket.io')
 var path = require('path')
 var _ = require('underscore')
-var app = express()
 var colors = require('colors')
+var parser = require('ua-parser-js')
 var http = require('http')
-var cookieParser = require('cookie-parser');
-var qrcode = require('qrcode-terminal');
-var ip = require('ip');
+var cookieParser = require('cookie-parser')
+var qrcode = require('qrcode-terminal')
+var ip = require('ip')
+var AV = require('leanengine')
 
-var app = new express()
+var app = express()
 
-app.set('port', process.env.PORT || 1024)
 app.set('view engine', 'ejs')
-app.set('root', path.resolve(__dirname, '../').replace(/\/+$/, ''))
-app.set('views', app.get('root') + '/views')
-app.use(cookieParser('novelcn_yzw secret cookie'));
+
+// 使用这个中间件
+app.use(AV.Cloud)
+app.set('views', path.join(__dirname, '../views'))
+app.use(cookieParser('iua secret cookie'))
+
+
+var clients = {}
 
 // index
 app.get('/', function(req, res) {
   var ua = req.headers['user-agent']
   var current = {
+    id: '',
     name: '当前设备',
-    info: {
-      ua: ua
-    }
+    uastring: ua,
+    info: JSON.stringify(parser(ua))
   }
 
   res.render('dashboard.ejs', {
@@ -33,52 +39,39 @@ app.get('/', function(req, res) {
   })
 })
 
-app.get('/client/:cid', function(req, res) {
-
-})
-
 app.get('/device/:cid', function(req, res) {
   var params = req.params
   var cid = req.params.cid
   var ua = req.headers['user-agent']
-  var deviceId = '';
-
-  deviceId = req.cookies.deviceId || _uuid();
-
-  var curClients = clients[cid]
-
-
-  if (!_.isUndefined(curClients)) {
-    
-    curClients[deviceId] = 1;
-
-    clientSocket.emit('client:update' + cid, {
-      id: deviceId,
-      name: deviceId,
-      cid: cid,
-      info: {
-        ua: ua
-      }
-    })
+  var deviceId = req.cookies.deviceId || _uuid()
+  var linkClients = clients[cid]
+  var deviceInfo = {
+    id: deviceId,
+    name: deviceId,
+    cid: cid,
+    uastring: ua,
+    info: JSON.stringify(parser(ua))
   }
 
   res.cookie('deviceId', deviceId, {
     maxAge: 7 * 24 * 60 * 60 * 1000
   })
+  res.render('device.ejs', deviceInfo)
 
-  res.render('device.ejs', {
-    id: deviceId,
-    cid: cid,
-    ua: ua
-  })
+  if (!_.isUndefined(linkClients)) {
+    linkClients[deviceId] = 1;
+    clientSocket.emit('client:update' + cid, deviceInfo)
+  }
 })
 
+app.use(express.static(path.join(__dirname, '../public/')))
 
-
-var clients = {}
+/**
+ *  server and port
+ **/
 
 var server = http.createServer(app)
-var io = require('socket.io').listen(server)
+var io = socketIo.listen(server)
 
 var clientSocket = io.of('/client')
 var deviceSocket = io.of('/device')
@@ -98,34 +91,7 @@ clientSocket.on('connection', function(socket) {
 
 })
 
-// setInterval(function(){
-// 	var date = Date.now();
-// 	_.each(clients, function(val, key){
-// 		console.log('client->[', date, ']', key)
-// 	})
-// }, 10000);
-
-
-app.use(express.static(path.join(app.get('root'), 'public')))
-
-
-/**
- *  server and port
- **/
-
-var port = app.get('port')
-server.listen(port, function() {
-  var url = 'http://'+ip.address()+ ':' + port
-
-
-  console.log('Server on url', String(url).blue)
-
-  qrcode.generate(url, function (qrcode) {
-    console.log(qrcode);
-  });
-  
-})
-
+module.exports = server
 
 
 /**

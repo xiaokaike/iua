@@ -1,6 +1,6 @@
 .idea
+npm-debug.log
 node_modules
-!node_modules/m9
 .DS_Store
 *.bak
 *.tmp
@@ -10,3 +10,4 @@ Thumbs.db
 /*.xmind
 /components/pages/gamble/a.js
 /components/pages/gamble/gamble_json.txt
+.avoscloud/

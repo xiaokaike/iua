@@ -19,13 +19,13 @@ export default {
     size: 10,
     // 'L', 'M', 'Q', 'H'
     level: String,
-    bgColor: String,
-    fgColor: String
+    bgc: String,
+    fgc: String
   },
   ready () {
     var size = this.size
-    var bgColor = this.bgColor
-    var fgColor = this.fgColor
+    var bgc = this.bgc
+    var fgc = this.fgc
     var $qr = this.$els.qr
 
     var qrcode = qr(this.val)
@@ -41,7 +41,7 @@ export default {
 
     cells.forEach(function (row, rdx) {
       row.forEach(function (cell, cdx) {
-        ctx.fillStyle = cell ? fgColor : bgColor
+        ctx.fillStyle = cell ? fgc : bgc
         var w = (Math.ceil((cdx + 1) * tileW) - Math.floor(cdx * tileW))
         var h = (Math.ceil((rdx + 1) * tileH) - Math.floor(rdx * tileH))
         ctx.fillRect(Math.round(cdx * tileW), Math.round(rdx * tileH), w, h)

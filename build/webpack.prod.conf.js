@@ -14,8 +14,8 @@ module.exports = merge(baseConfig, {
   output: {
     // naming output files with hashes for better caching.
     // dist/index.html will be auto-generated with correct URLs.
-    filename: '[name].[chunkhash].js',
-    chunkFilename: '[id].[chunkhash].js'
+    filename: '[name].js',
+    chunkFilename: '[id].js'
   },
   vue: {
     loaders: cssLoaders({
@@ -37,7 +37,7 @@ module.exports = merge(baseConfig, {
     }),
     new webpack.optimize.OccurenceOrderPlugin(),
     // extract css into its own file
-    new ExtractTextPlugin('[name].[contenthash].css'),
+    new ExtractTextPlugin('[name].css'),
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
