@@ -11,7 +11,7 @@ var cookieParser = require('cookie-parser')
 var qrcode = require('qrcode-terminal')
 var ip = require('ip')
 var AV = require('leanengine')
-
+var uuid = require('./uuid.js')
 var app = express()
 
 app.set('view engine', 'ejs')
@@ -43,7 +43,7 @@ app.get('/device/:cid', function(req, res) {
   var params = req.params
   var cid = req.params.cid
   var ua = req.headers['user-agent']
-  var deviceId = req.cookies.deviceId || _uuid()
+  var deviceId = req.cookies.deviceId || uuid()
   var linkClients = clients[cid]
   var deviceInfo = {
     id: deviceId,
@@ -92,15 +92,3 @@ clientSocket.on('connection', function(socket) {
 })
 
 module.exports = server
-
-
-/**
- * 生成唯一标识码的方法
- * @returns {string}
- */
-function _uuid() {
-  function s4() {
-    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-  }
-  return s4() + s4() + s4() + s4() + s4() + s4() + s4() + s4();
-}
